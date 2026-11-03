@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Abra Camera</title>
+<style>
+  :root{color-scheme:dark}
+  html,body{margin:0;height:100%}
+  body{background:#0a0e18;color:#e8eef9;font:15px/1.5 -apple-system,system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+  .bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:10px;flex:none}
+  .bar b{font-weight:800}
+  .status{font-size:12px;color:#9fb0cc;display:flex;align-items:center;gap:6px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#e0564b;flex:none}
+  .dot.on{background:#4fc07e}
+  .stage{flex:1;position:relative;background:#000;overflow:hidden;min-height:0}
+  video{width:100%;height:100%;object-fit:cover;background:#000}
+  video.mirror{transform:scaleX(-1)}
+  .hint{position:absolute;left:0;right:0;bottom:0;padding:12px 16px;text-align:center;font-size:12.5px;color:#cdd8ee;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+  .controls{display:flex;gap:10px;padding:16px;justify-content:center;flex:none}
+  button{border:none;border-radius:99px;padding:13px 22px;font-size:15px;font-weight:700;cursor:pointer}
+  .flip{background:#1a2740;color:#dfe9f8}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div><b>Abra</b> &middot; phone camera</div>
+    <div class="status"><span class="dot" id="dot"></span><span id="st">starting&hellip;</span></div>
+  </div>
+  <div class="stage">
+    <video id="v" autoplay muted playsinline></video>
+    <div class="hint" id="hint">This is a camera for your computer &mdash; keep this page open while you film there.</div>
+  </div>
+  <div class="controls">
+    <button class="flip" id="flip">Flip to back camera</button>
+  </div>
+<script>
+(function(){
+  var sess=new URLSearchParams(location.search).get('s')||'';
+  var tok=new URLSearchParams(location.search).get('t')||'';
+  var st=document.getElementById('st'), dot=document.getElementById('dot'), v=document.getElementById('v'), flip=document.getElementById('flip');
+  var facing='user', stream=null, pc=null, vsender=null, asender=null, started=false;
+  function status(t,on){ st.textContent=t; if(on!==undefined) dot.classList.toggle('on',!!on); }
+  async function getCam(){
+    var s=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:true});
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); }
+    stream=s; v.srcObject=s; v.classList.toggle('mirror', facing==='user');
+    flip.textContent = (facing==='user') ? 'Flip to back camera' : 'Flip to front camera';
+    return s;
+  }
+  // the brightness control this phone camera offers, if any, reported to the computer (key is '' when there is none)
+  function capsMsg(){
+    var t=stream&&stream.getVideoTracks?stream.getVideoTracks()[0]:null;
+    var c=(t&&t.getCapabilities)?t.getCapabilities():{}, st=(t&&t.getSettings)?t.getSettings():{};
+    var key=c.exposureCompensation?'exposureCompensation':(c.brightness?'brightness':'');
+    var r=key?c[key]:null;
+    return {type:'caps', key:key, min:r?r.min:0, max:r?r.max:0, step:r?(r.step||1):1, value:key&&st[key]!==undefined?st[key]:null};
+  }
+  function sendCaps(){ send(capsMsg()); }
+  // the computer asks for a brightness: apply it to this camera and report what the camera now shows
+  async function setBright(v){
+    var t=stream&&stream.getVideoTracks?stream.getVideoTracks()[0]:null;
+    var c=(t&&t.getCapabilities)?t.getCapabilities():{};
+    var key=c.exposureCompensation?'exposureCompensation':(c.brightness?'brightness':'');
+    if(key){
+      var r=c[key], n=Math.min(r.max, Math.max(r.min, Number(v)));
+      try{ var adv={}; adv[key]=n; await t.applyConstraints({advanced:[adv]}); }catch(e){}
+    }
+    sendCaps();
+  }
+  function send(data){ return fetch('/rtc/send?t='+encodeURIComponent(tok),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({s:sess,from:'cam',data:data})}).catch(function(){}); }
+  async function loop(){
+    while(true){
+      try{
+        var r=await fetch('/rtc/poll?s='+encodeURIComponent(sess)+'&role=cam&t='+encodeURIComponent(tok)).then(function(x){return x.json();});
+        var ms=(r&&r.msgs)||[];
+        for(var i=0;i<ms.length;i++){ await handle(ms[i]); }
+      }catch(e){}
+      await new Promise(function(z){ setTimeout(z,1000); });
+    }
+  }
+  async function handle(m){
+    if(!pc||!m) return;
+    if(m.type==='ctl'){ setBright(m.value); return; }
+    if(m.type==='answer'){ try{ await pc.setRemoteDescription(new RTCSessionDescription(m)); }catch(e){} }
+    else if(m.type==='ice' && m.candidate){ try{ await pc.addIceCandidate(m.candidate); }catch(e){} }
+  }
+  async function start(){
+    try{ await getCam(); }catch(e){ status('allow camera + mic access, then reload'); return; }
+    pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+    pc.onicecandidate=function(e){ if(e.candidate) send({type:'ice',candidate:e.candidate}); };
+    pc.onconnectionstatechange=function(){
+      var cs=pc.connectionState;
+      if(cs==='connected') status('live on your computer', true);
+      else if(cs==='failed') status('couldn’t connect — same wifi? reload', false);
+      else if(cs==='disconnected') status('reconnecting…', false);
+    };
+    stream.getTracks().forEach(function(t){ var snd=pc.addTrack(t,stream); if(t.kind==='video') vsender=snd; else if(t.kind==='audio') asender=snd; });
+    var offer=await pc.createOffer(); await pc.setLocalDescription(offer);
+    send({type:offer.type, sdp:offer.sdp});
+    sendCaps();
+    status('waiting for your computer…');
+    loop();
+  }
+  flip.onclick=async function(){
+    facing=(facing==='user')?'environment':'user';
+    try{
+      var s=await getCam();
+      // swap BOTH tracks: getCam() stops the old audio too, so the phone must send the new audio or the take goes silent
+      var vt=s.getVideoTracks()[0], at=s.getAudioTracks()[0];
+      if(vsender&&vt) await vsender.replaceTrack(vt);
+      if(asender&&at) await asender.replaceTrack(at);
+      sendCaps();
+    }
+    catch(e){ facing=(facing==='user')?'environment':'user'; status('could not switch camera'); }
+  };
+  if(!sess){ status('bad link — rescan the code'); return; }
+  start();
+})();
+</script>
+</body>
+</html>

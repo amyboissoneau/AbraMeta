@@ -1,0 +1,51 @@
+# secrets & live data — never committed
+.env
+state.db
+*.log
+bot.pid
+generated/
+story_queue/
+storyboards/
+venv/
+__pycache__/
+*.pyc
+creator-ai-expenses-*.pdf
+manager_journal.md
+style_examples.md
+.claude/
+friends_ledger.md
+
+# voice/strategy — keep private
+persona.md
+posting_plan.md
+HACKATHON_NOTES.md
+DEMO_SCRIPT.md
+promos.json
+
+# creator/user content — never publish
+assets/reactions/
+assets/drafts/
+
+# stale backups
+*.bak-*
+liveview.py.bak-*
+.mon_cache.json
+SUBMISSION.md
+
+# local self-signed TLS cert (for mic over https on LAN) — never commit the key
+certs/
+DEMO_NARRATION.md
+assets/profile_*.jpg
+
+# large 3D crew models — kept on disk, not committed (crew3d feature is off)
+*.glb
+
+_rxcut/
+.welcomed
+
+# watchdog state and log
+.watchdog.json
+watchdog.log
+watchdog.out
+.bot_heartbeat
+DEMO_CHECKLIST.md

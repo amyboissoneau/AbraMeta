@@ -1,0 +1,9 @@
+anthropic==0.120.2
+requests==2.32.5
+python-dotenv==1.2.1
+pillow==11.3.0
+edge-tts==7.3.1
+segno==1.6.6
+reportlab==4.5.1
+tzdata==2026.6
+cryptography==50.0.2

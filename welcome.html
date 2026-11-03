@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meet your crew</title>
+<style>
+  :root{
+    /* matched to the dashboard dark navy theme (html[data-theme=dark]) */
+    --bg:#0D1526; --surface:#1A2740; --ink:#EDF2FB; --ink2:#B6C3DA;
+    --accent:#5E90E6; --accent2:#9CBEF4; --good:#4FC07E;
+    --r:22px;
+    --out: 8px 8px 20px rgba(0,0,0,.6), -6px -6px 16px rgba(255,255,255,.05);
+    --out-sm: 5px 5px 13px rgba(0,0,0,.55), -4px -4px 10px rgba(255,255,255,.045);
+    --in: inset 5px 5px 13px rgba(0,0,0,.62), inset -4px -4px 10px rgba(255,255,255,.05);
+    --in-sm: inset 4px 4px 9px rgba(0,0,0,.58), inset -3px -3px 7px rgba(255,255,255,.045);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink); background:var(--bg); min-height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    padding:40px 18px 64px; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  .wrap{width:100%; max-width:640px; margin:0 auto; text-align:center}
+  .logo{height:42px; width:auto; opacity:.95; margin-bottom:20px}
+  h1{font-size:25px; line-height:1.2; margin:6px 0 8px; letter-spacing:-.01em; font-weight:680}
+  h1 .g{background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .sub{color:var(--ink2); font-size:14px; line-height:1.55; max-width:30em; margin:0 auto}
+
+  /* ---------- LOADING STAGE: one character at a time, flipping through ---------- */
+  #stage{margin-top:34px; display:flex; flex-direction:column; align-items:center; gap:20px; transition:opacity .45s, transform .45s}
+  #stage.gone{opacity:0; transform:translateY(-10px); pointer-events:none; position:absolute}
+  .pod{position:relative; width:168px; height:168px; border-radius:50%; background:var(--surface);
+       box-shadow:var(--in); display:flex; align-items:center; justify-content:center}
+  .pod .orbit{position:absolute; inset:9px; border-radius:50%; border:2px solid transparent;
+       border-top-color:var(--accent); border-right-color:var(--accent2); animation:spin 1.15s linear infinite; opacity:.85}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pod .avatar{width:112px; height:112px; object-fit:contain; filter:drop-shadow(0 8px 12px rgba(0,0,0,.5));
+       transition:opacity .34s, transform .34s}
+  .pod .avatar.swap{opacity:0; transform:scale(.82) rotateY(40deg)}
+  .stage-txt{min-height:52px}
+  .stage-name{font-weight:680; font-size:17px}
+  .stage-name .chip{font-size:10.5px; font-weight:650; color:var(--ink2); text-transform:uppercase;
+       letter-spacing:.6px; margin-left:8px; padding:3px 10px; border-radius:999px; background:var(--surface); box-shadow:var(--out-sm)}
+  .stage-line{color:var(--accent); font-size:14.5px; margin-top:9px; transition:opacity .28s}
+  .stage-line.swap{opacity:0}
+  .pips{display:flex; gap:9px; justify-content:center; margin-top:2px}
+  .pips i{width:9px; height:9px; border-radius:50%; background:var(--surface); box-shadow:var(--in-sm)}
+  .pips i.on{box-shadow:var(--out-sm); background:linear-gradient(145deg,var(--accent),var(--accent2))}
+
+  /* ---------- REVEAL: the three real findings ---------- */
+  #reveal{margin-top:30px; display:none}
+  #reveal.show{display:block; animation:fade .5s ease both}
+  @keyframes fade{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:none}}
+  .scan{font-size:12.5px; color:var(--good); letter-spacing:.3px; margin:0 0 20px}
+  .cards{display:flex; flex-direction:column; gap:16px; text-align:left}
+  .card{display:flex; gap:16px; align-items:center; padding:17px 18px; border-radius:var(--r);
+        background:var(--surface); box-shadow:var(--out); opacity:0; transform:translateY(10px);
+        animation:rise .55s cubic-bezier(.22,.7,.3,1) forwards}
+  .card:nth-child(1){animation-delay:.04s} .card:nth-child(2){animation-delay:.12s} .card:nth-child(3){animation-delay:.2s}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .face{flex:0 0 66px; width:66px; height:66px; border-radius:50%; background:var(--surface);
+        box-shadow:var(--in-sm); display:flex; align-items:center; justify-content:center}
+  .face img{width:48px; height:48px; object-fit:contain; filter:drop-shadow(0 4px 7px rgba(0,0,0,.45))}
+  .cbody{flex:1; min-width:0}
+  .cname{font-weight:660; font-size:15px; display:flex; align-items:center; gap:9px}
+  .crole{font-size:10.5px; font-weight:650; color:var(--ink2); text-transform:uppercase; letter-spacing:.6px;
+         padding:3px 10px; border-radius:999px; background:var(--surface); box-shadow:var(--out-sm)}
+  .finding{margin-top:7px; font-size:13.5px; line-height:1.5; color:var(--ink); min-height:20px}
+  .finding.muted{color:var(--ink2)}
+  .caret{display:inline-block; width:2px; height:1em; background:var(--accent); vertical-align:-2px; margin-left:1px; animation:cb .8s steps(1) infinite}
+  @keyframes cb{50%{opacity:0}}
+  .footer{text-align:center; margin-top:30px}
+  .go{display:inline-flex; align-items:center; gap:9px; font-weight:670; font-size:15px; color:var(--ink);
+      background:var(--surface); box-shadow:var(--out); border:none; border-radius:999px; padding:15px 32px;
+      cursor:pointer; text-decoration:none; opacity:.5; pointer-events:none; transition:opacity .4s, box-shadow .15s, transform .12s}
+  .go .ar{background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:800}
+  .go.ready{opacity:1; pointer-events:auto}
+  .go.ready:active{box-shadow:var(--in-sm); transform:translateY(1px)}
+  .foot-note{color:var(--ink2); font-size:12px; margin-top:14px; min-height:16px}
+  @media (max-width:520px){ h1{font-size:22px} .pod{width:150px;height:150px} .pod .avatar{width:98px;height:98px} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <img class="logo" src="/logo.png" alt="Abra" onerror="this.style.display='none'">
+    <h1>Your crew is <span class="g">getting to know you</span></h1>
+    <p class="sub">Give us a moment — we're going through everything you just connected so we know exactly who you are before you start.</p>
+
+    <!-- LOADING: flip through the crew as they discover things -->
+    <div id="stage">
+      <div class="pod">
+        <span class="orbit"></span>
+        <img class="avatar" id="stageImg" src="/crew/cat.png" alt="">
+      </div>
+      <div class="stage-txt">
+        <div class="stage-name"><span id="stageName">Nico</span><span class="chip" id="stageRole">Audience</span></div>
+        <div class="stage-line" id="stageLine">Reading your comment threads…</div>
+      </div>
+      <div class="pips"><i class="on"></i><i></i><i></i></div>
+    </div>
+
+    <!-- REVEAL: the three real findings -->
+    <div id="reveal">
+      <div class="scan" id="scan"></div>
+      <div class="cards">
+        <div class="card">
+          <div class="face"><img src="/crew/cat.png" alt="Nico"></div>
+          <div class="cbody"><div class="cname">Nico <span class="crole">Audience</span></div>
+            <div class="finding" id="f-nico"></div></div>
+        </div>
+        <div class="card">
+          <div class="face"><img src="/crew/koala.png" alt="Koa"></div>
+          <div class="cbody"><div class="cname">Koa <span class="crole">Money</span></div>
+            <div class="finding" id="f-koa"></div></div>
+        </div>
+        <div class="card">
+          <div class="face"><img src="/crew/dog.png" alt="Sage"></div>
+          <div class="cbody"><div class="cname">Sage <span class="crole">Content</span></div>
+            <div class="finding" id="f-sage"></div></div>
+        </div>
+      </div>
+      <div class="footer">
+        <a class="go" id="go" href="/">Enter Abra <span class="ar">&rarr;</span></a>
+        <div class="foot-note" id="note"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var START = Date.now(), MIN_READ = 4200;
+
+  var CREW = [
+    {name:"Nico", role:"Audience", img:"/crew/cat.png",
+     lines:["Reading your comment threads…","Seeing what your fans reply to…","Learning what your people love…"]},
+    {name:"Sage", role:"Content", img:"/crew/dog.png",
+     lines:["Watching your reels…","Measuring what holds attention…","Finding your winning length…"]},
+    {name:"Koa", role:"Money", img:"/crew/koala.png",
+     lines:["Counting your followers…","Checking your watch minutes…","Tallying up your earnings…"]}
+  ];
+
+  // ---- flip through the characters while the real read runs ----
+  var step = 0, cycling = true;
+  var img = document.getElementById("stageImg"), nm = document.getElementById("stageName"),
+      rl = document.getElementById("stageRole"), ln = document.getElementById("stageLine"),
+      pips = document.querySelectorAll(".pips i");
+  function flip(){
+    if(!cycling) return;
+    var c = CREW[step % 3], line = c.lines[Math.floor(step/3) % c.lines.length];
+    img.classList.add("swap"); ln.classList.add("swap");
+    setTimeout(function(){
+      img.src = c.img; nm.textContent = c.name; rl.textContent = c.role; ln.textContent = line;
+      pips.forEach(function(p,i){ p.classList.toggle("on", i === (step % 3)); });
+      img.classList.remove("swap"); ln.classList.remove("swap");
+    }, 300);
+    step++;
+    setTimeout(flip, 1350);
+  }
+  setTimeout(flip, 1350);
+
+  // ---- reveal helpers ----
+  function fmtKoa(k){
+    if(!k) return "";
+    if((k.followers==null) && (k.earn_30==null) && (k.mins60==null)) return "";
+    if(k.closest){
+      var c=k.closest, s="You're "+c.pct+"% of the way to "+c.name;
+      if(c.have!=null && c.need!=null && c.label){ s+=" — "+Number(c.have).toLocaleString()+" of "+Number(c.need).toLocaleString()+" "+String(c.label).toLowerCase()+"."; }
+      else { s+="."; }
+      if(k.earn_30!=null) s+=" About $"+Number(k.earn_30).toLocaleString()+" in the last 30 days.";
+      return s;
+    }
+    var parts=[];
+    if(k.followers!=null) parts.push(Number(k.followers).toLocaleString()+" followers");
+    if(k.earn_30!=null) parts.push("about $"+Number(k.earn_30).toLocaleString()+" in the last 30 days");
+    if(!parts.length) return "";
+    return "You're monetizing — "+parts.join(" and ")+".";
+  }
+  function typeOut(el, text){
+    el.classList.remove("muted"); el.innerHTML='<span class="caret"></span>';
+    var i=0, caret=el.firstChild;
+    (function s(){ if(i>=text.length){ if(caret) caret.remove(); return; }
+      el.insertBefore(document.createTextNode(text.charAt(i)), caret); i++; setTimeout(s, 13+Math.random()*13); })();
+  }
+  function put(fid, text, muted){
+    var el=document.getElementById(fid); if(!el) return;
+    if(muted){ el.classList.add("muted"); el.textContent=text; } else { typeOut(el, text); }
+  }
+
+  function reveal(data){
+    cycling=false;
+    var stage=document.getElementById("stage"); stage.classList.add("gone");
+    var rv=document.getElementById("reveal"); rv.classList.add("show");
+
+    var sc=(data && data.scanned)||{}, bits=[];
+    var np=(sc.pages&&sc.pages.length)?sc.pages.length:0;
+    if(np) bits.push(np+(np===1?" page":" pages"));
+    if(sc.posts) bits.push(sc.posts+" recent posts");
+    if(sc.reels) bits.push(sc.reels+" reels");
+    document.getElementById("scan").textContent = bits.length ? ("✓ We studied "+bits.join(" · ")) : "✓ We read your connected account";
+
+    var nico=((data&&data.nico)||"").trim(), sage=((data&&data.sage)||"").trim(), koa=fmtKoa(data&&data.koa);
+    setTimeout(function(){ put("f-nico", nico || "As your comments roll in, I'll learn exactly what your audience lights up for.", !nico); }, 260);
+    setTimeout(function(){ put("f-koa", koa || "I'll start tracking your growth and earnings from today.", !koa); }, 1150);
+    setTimeout(function(){
+      put("f-sage", sage || "The moment you post, I'll read your retention and tell you exactly what's working.", !sage);
+      var go=document.getElementById("go"); if(go) go.classList.add("ready");
+      var note=document.getElementById("note"); if(note) note.textContent="That's you — and we're just getting started.";
+    }, 2050);
+  }
+  function fail(){ reveal({scanned:{}, nico:"", koa:null, sage:""}); }
+
+  fetch("/crewread",{cache:"no-store"}).then(function(r){return r.json();})
+    .then(function(data){
+      var wait=Math.max(0, MIN_READ-(Date.now()-START));
+      setTimeout(function(){ if(data && !data.error) reveal(data); else fail(); }, wait);
+    })
+    .catch(function(){ setTimeout(fail, 700); });
+})();
+</script>
+</body>
+</html>

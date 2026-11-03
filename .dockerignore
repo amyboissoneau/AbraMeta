@@ -1,0 +1,29 @@
+# ALLOWLIST: the hosted judge image contains ONLY what is listed below.
+# Everything else (keys, databases, logs, your photos, drafts, certs, venv, git) stays out.
+*
+!requirements.txt
+!liveview.py
+!bot.py
+!content_pipeline.py
+!content_brain.py
+!content_publish.py
+!sam_cutout.py
+!muse_open.py
+!analytics.py
+!storyboard.py
+!meta_live.py
+!film_genres.json
+!persona.example.md
+!cam.html
+!welcome.html
+!judge
+judge/*
+!judge/seed.py
+!assets
+assets/*
+!assets/crew_*.png
+assets/crew_fox*.png
+!assets/logo_abra.png
+!assets/sidebar_metal.png
+!assets/mascot_cat.png
+!assets/mascot_dog.png
