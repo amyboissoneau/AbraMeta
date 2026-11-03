@@ -35,7 +35,7 @@ The hackathon project is Abra's **AI creator studio**, built on the Meta Model A
 - **Reel captions:** the Muse Voice transcript is burned onto the Reel (portrait 9:16) as well as the Stories, for Load, auto-publish and batch posts.
 - **Reply approval:** a page can hold each drafted comment reply until the creator approves it. It is off by default.
 
-*Honest scope: the comment-reply loop and the first dashboard snapshot (Oct 21, 2026) predate the event. The list above is what was added or substantially reworked during it; the git history shows the dates. For this submission the live camera recorder, hands-free gestures, Greenscreen, the Create templates and the Create teleprompter, and voice commands and spoken replies are switched off in the app. Their code stays in the repository, behind switches in `liveview.py`, and they are not part of the demo.*
+*Honest scope: the comment-reply loop and the first dashboard snapshot (Oct 21, 2026) predate the event. The list above is what was added or substantially reworked during it. For this submission the live camera recorder, hands-free gestures, Greenscreen, the Create templates and the Create teleprompter, and voice commands and spoken replies are switched off in the app. Their code stays in the repository, behind switches in `liveview.py`, and they are not part of the demo.*
 
 ---
 
@@ -63,7 +63,7 @@ Each character owns a domain of the creator's business, and Nico, Sage and Koa e
 |---|---|---|
 | **Nico** (cat) | Engagement | Reads comments on your posts and replies in your voice, grounded in the video. Likes the good ones, and skips spam and hate. |
 | **Sage** (dog) | Content Studio | *Watches and listens* to a dropped video, then writes the title, caption, hashtags and best-time schedule. |
-| **Koa** (koala) | Money & Legal | Keeps the books (AI spend vs. page earnings), reviews brand contracts for traps, watches page standing. |
+| **Koa** (koala) | Money & Legal | Keeps the books (AI spend vs. page earnings), keeps a dated record of what you earn and drafts disputes, watches page standing. |
 
 *The crew are the teammates; the models that power them — Meta's **Muse** family for content/analysis, **Claude** for in-voice replies and frame vision — are the ones named in the table above.*
 

@@ -6164,7 +6164,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
       <div class="help-crew">
         <div class="help-row"><b>Nico</b><span>Engagement</span><p>Reads comments on your posts and writes a warm, on-topic reply in your voice. Likes the good ones, and skips spam and hate.</p></div>
         <div class="help-row"><b>Sage</b><span>Launchpad</span><p>Watches and listens to a video you drop in, then writes the title, caption, hashtags and picks the best time to post.</p></div>
-        <div class="help-row"><b>Koa</b><span>Money &amp; Legal</span><p>Keeps the books, tracks spend vs earnings, reviews brand contracts for traps, and watches your page's standing.</p></div>
+        <div class="help-row"><b>Koa</b><span>Money &amp; Legal</span><p>Keeps the books, tracks spend vs earnings, keeps a dated record of what you earn and drafts disputes, and watches your page's standing.</p></div>
       </div>
       <p class="help-tip">Tip: on the Home page, hover a crew member to say hi, or tap their card to open their desk.</p>
     </section>
@@ -6192,7 +6192,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
       <h2> The tabs</h2>
       <div class="help-crew">
         <div class="help-row"><b>Home</b><span></span><p>Your whole crew at a glance — live status, and a tap opens their desk.</p></div>
-        <div class="help-row"><b>Launchpad</b><span>Create · Load · Engagement · Insights</span><p>Your content, start to finish: drop a video to make a post, see what's coming up, watch replies happen live, read your analytics, and pick videos to prioritize.</p></div>
+        <div class="help-row"><b>Launchpad</b><span>Load · Engagement · Insights</span><p>Your content, start to finish: drop a video to make a post, see what's coming up, watch replies happen live, read your analytics, and pick videos to prioritize.</p></div>
         <div class="help-row" style="display:none"><b>Brand Deals</b><span></span><p>Your brand list: add brands, track stages, and copy the drafted pitches.</p></div>
         <div class="help-row"><b>Account</b><span>Profile · Help</span><p>Your profile, earnings &amp; AI costs (Koa's books), connected pages, publishing modes, the engagement pause, and this guide.</p></div>
       </div>

@@ -1596,6 +1596,8 @@ def golden_pass(db: sqlite3.Connection, persona: str) -> None:
     """First-hour boost: before each slow full sweep, hit every page's
     newest posts so early commenters get near-instant replies — the
     early engagement, which we expect to help distribution (not measured yet)."""
+    if replies_in_window(db) >= reply_cap(db):
+        return
     for pid, pname, ptoken in load_pages(db):
         globals()["PAGE_ID"], globals()["PAGE_TOKEN"] = pid, ptoken
         try:
