@@ -129,6 +129,15 @@ These steps run the full app on your own computer. You don't need a hosted copy,
 - **Python 3.12.** The pinned versions in `requirements.txt` install on it.
 - **ffmpeg**, for video, thumbnails, Stories and voice transcription: `brew install ffmpeg`.
 
+### Keys for the AI features
+
+The AI features use two keys. You can look around without them; add them to try the AI.
+
+- **Meta Model API key** (`META_MUSE_API_KEY`): the Muse models (Muse Voice, Muse Spark, Muse Wonder and Muse Image). Hackathon participants can claim Meta API credits through the credits form linked from the hackathon's announcements. Claiming needs a payment method on the account, so set a spend limit.
+- **Anthropic API key** (`ANTHROPIC_API_KEY`): Claude, which reads video frames and drafts some replies. Create one at console.anthropic.com.
+
+Add them with the **Connect your AI keys** banner, or in `.env`. Facebook is not needed for any of the AI features.
+
 ### Set up and run
 
 ```
