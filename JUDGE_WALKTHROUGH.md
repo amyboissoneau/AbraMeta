@@ -75,7 +75,7 @@ These parts exist in the code but are switched off for the submission, so they a
 - Greenscreen, the Create templates and the Create teleprompter.
 - Voice: the chat's microphone and spoken replies, and voice commands.
 
-Each one can be turned back on with a single switch in `liveview.py` (`RX_CAMERA_ON`, `RX_GREENSCREEN_ON`, `ABRA_VOICE_ON`).
+The camera, Greenscreen and voice can be turned back on with one switch each in `liveview.py` (`RX_CAMERA_ON`, `RX_GREENSCREEN_ON`, `ABRA_VOICE_ON`). The Create templates are switched off by an empty `film_genres.json`; the Create teleprompter has no switch in this version.
 
 ## If something looks wrong
 

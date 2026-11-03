@@ -8327,7 +8327,7 @@ async function rxStartCamNow(deviceId){
     const why = e && e.name === 'NotFoundError' ? 'No camera found on this computer.'
       : e && e.name === 'NotReadableError' ? 'The camera is in use by another program (Teams, Zoom or another browser tab). Close it and try again.'
       : e && e.name === 'OverconstrainedError' ? 'This computer has no camera that matches the request.'
-      : 'Camera blocked: allow camera access in your browser (on a computer, open Abra at http://localhost:8765).';
+      : 'Camera blocked: allow camera access in your browser (on a computer, open Abra at the address shown in the Terminal when it starts).';
     if(msg) msg.textContent=why; return false; }
 }
 async function rxListCams(){

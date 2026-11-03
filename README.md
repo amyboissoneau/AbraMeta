@@ -134,7 +134,7 @@ These steps run the full app on your own computer. You don't need a hosted copy,
 The AI features use two keys. You can look around without them; add them to try the AI.
 
 - **Meta Model API key** (`META_MUSE_API_KEY`): the Muse models (Muse Voice, Muse Spark, Muse Wonder and Muse Image). Hackathon participants can claim Meta API credits through the credits form linked from the hackathon's announcements. Claiming needs a payment method on the account, so set a spend limit.
-- **Anthropic API key** (`ANTHROPIC_API_KEY`): Claude, which reads video frames and drafts some replies. Create one at console.anthropic.com.
+- **Anthropic API key** (`ANTHROPIC_API_KEY`): Claude, which reads video frames and drafts some replies. Get one at https://platform.claude.com.
 
 Add them with the **Connect your AI keys** banner, or in `.env`. Facebook is not needed for any of the AI features.
 
@@ -159,6 +159,8 @@ ABRA_PORT=9000 python3 liveview.py     # then open http://localhost:9000
 
 If you change `ABRA_PORT`, also add `http://localhost:9000/oauth/callback` (with your port) as a Valid OAuth Redirect URI in your Facebook app. Otherwise Facebook sign-in will not return to Abra.
 
+The HTTPS port also listens on your home network, so a phone on the same Wi-Fi can reach Abra. Requests from other devices need the access token in the link Abra gives you (`/lan` on your Mac). Do not forward this port to the internet.
+
 For a step-by-step tour of the screens, see [JUDGE_WALKTHROUGH.md](JUDGE_WALKTHROUGH.md).
 
 ### Keep the bot running
@@ -172,11 +174,11 @@ Secrets (`.env`), live state (`state.db`) and logs are never committed.
 ### Check your setup
 
 ```
-python preflight.py          # free checks: dashboard, bot, keys present (names only), ffmpeg, database, Internet
+python preflight.py          # free checks (run with the venv active): dashboard, bot, keys present (names only), ffmpeg, database, Internet
 python preflight.py --live   # also makes one small Claude and Facebook call each, plus one small Muse call (a direct key check)
 ```
 
-Each line says PASS, INFO, WARN or FAIL and what to do. INFO means expected for this version (for example, the Create templates are switched off), not a fault. Preflight never prints a key or token.
+Each line says PASS, INFO, WARN or FAIL and what to do. INFO means expected for this version (for example, the Create templates are switched off in this version), not a fault. Preflight never prints a key or token.
 
 ### Try it without keys
 
