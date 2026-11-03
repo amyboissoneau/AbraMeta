@@ -1621,6 +1621,9 @@ def golden_pass(db: sqlite3.Connection, persona: str) -> None:
                 log.error("seed error on %s: %s", post.get("id"), str(e)[:80])
             if post_comment_total(post) == 0:
                 continue
+            if _golden_last_total.get(post["id"]) == post_comment_total(post):
+                continue   # no new comments since the last boost pass for this post
+            _golden_last_total[post["id"]] = post_comment_total(post)
             if handled_count_for_post(db, post["id"]) >= post_comment_total(post):
                 continue
             log.info("[%s] GOLDEN HOUR: fresh post (%d min old) — boosting now",
@@ -1632,6 +1635,9 @@ def golden_pass(db: sqlite3.Connection, persona: str) -> None:
                 return   # window full — golden posts get first claim next window
             except Exception as e:
                 log.error("[%s] golden pass error: %s", pname, str(e)[:100])
+
+
+_golden_last_total: dict = {}   # post id -> comment count at its last golden pass
 
 
 _earners_cache = {"at": 0.0, "ids": set()}

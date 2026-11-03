@@ -5996,7 +5996,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
       You can connect any page where you're an admin, editor, or moderator.</p>
       <a class="btn green" href="/connect" target="_blank" rel="noopener"> Connect a Facebook page</a>
     </section>
-    <h2 class="acct-div"> Money <span class="hint">earnings, AI costs &amp; contracts — Koa's desk</span></h2>
+    <h2 class="acct-div"> Money <span class="hint">earnings, AI costs &amp; Koa's desk</span></h2>
     <div class="engpresenter" id="koaPresenter">
       <div class="engcatwrap" id="koaWrap">
         <img loading="lazy" decoding="async" class="engcat engbase" src="/crew/koala.png" alt="Koa">
@@ -7293,7 +7293,7 @@ function renderRxPicker(){
   const cur=(document.getElementById('scReaction')||{}).value||'';
   const none=`<div class="rxopt ${cur?'':'selected'}" onclick="pickReaction('',this)"><span class="rxnone">None</span></div>`;
   const tiles=list.map(n=>`<div class="rxopt ${cur===n?'selected':''}" onclick="pickReaction('${n}',this)"><img src="/reaction/${n}" alt=""></div>`).join('');
-  const hint = list.length ? '' : '<span class="hint">Add reactions in Settings → Your reactions</span>';
+  const hint = list.length ? '' : '<span class="hint">Add reactions in Account → Your custom stickers</span>';
   host.innerHTML = `<div class="rxlabel">Add a custom sticker <span class="sub">a cutout of you for your Stories</span></div><div class="rxrow">${none}${tiles}</div>${hint}<div class="rxeditor" id="rxEditor"></div>`;
   if(cur) showRxEditor(cur);
 }
