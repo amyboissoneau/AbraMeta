@@ -138,6 +138,17 @@ The AI features use two keys. You can look around without them; add them to try 
 
 Add them with the **Connect your AI keys** banner, or in `.env`. Facebook is not needed for any of the AI features.
 
+### Connect your Facebook page (optional)
+
+Connecting a Page shows its real numbers in Insights and lets Abra schedule posts to it. It needs your own Meta app, once:
+
+1. At developers.facebook.com, create an app (type Business) and add the **Facebook Login** product.
+2. Under Facebook Login → Settings, add the Valid OAuth Redirect URI `http://localhost:8765/oauth/callback` (use your `ABRA_PORT` if you changed it).
+3. Copy the app's **App ID** and **App Secret** (Settings → Basic). Paste them into the **Connect your AI keys** banner, under "Facebook — your Meta app", and save.
+4. Open the **Connect a Facebook page** link in Account, sign in, and choose the Page you admin.
+
+While the app is in Development mode, it works for Pages you admin, with no app review needed.
+
 ### Set up and run
 
 ```

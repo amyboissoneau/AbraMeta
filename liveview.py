@@ -40,6 +40,9 @@ _DEFAULT_PORT = (os.environ.get("PORT") or "8765") if JUDGE_MODE else "8765"
 PORT = int(os.environ.get("ABRA_PORT") or _DEFAULT_PORT)
 # same app over TLS (self-signed cert in certs/) so phones can use the mic (getUserMedia needs a secure context)
 HTTPS_PORT = int(os.environ.get("ABRA_HTTPS_PORT") or "8766")
+# ABRA_DEMO_DRY_RUN=true makes the dashboard's Approve & schedule and batch paths dry-run only (nothing reaches Facebook);
+# the bot's own replies and likes are not affected. Use it while recording the demo.
+DEMO_DRY_RUN = os.environ.get("ABRA_DEMO_DRY_RUN", "false").strip().lower() in ("1", "true", "yes")
 LINE = re.compile(
     r"^(?P<time>\d\d:\d\d:\d\d) INFO (?P<kind>REPLY|LIKE|SKIP|DRYRUN|DRYLIKE)\s+"
     r"(?P<cid>\S+) \| \"(?P<comment>.*?)\"(?: (?:->|\|) \"?(?P<detail>.*?)\"?)?$"
@@ -204,6 +207,12 @@ def _save_ai_keys(form: dict) -> int:
     env_path = BASE / ".env"
     pairs = {"ANTHROPIC_API_KEY": (form.get("anthropic") or [""])[0].strip(),
              "META_MUSE_API_KEY": (form.get("muse") or [""])[0].strip()}
+    _fbid = (form.get("fbappid") or [""])[0].strip()
+    if _fbid.isdigit():
+        pairs["FB_APP_ID"] = _fbid
+    _fbs = (form.get("fbsecret") or [""])[0].strip()
+    if _fbs:
+        pairs["FB_APP_SECRET"] = _fbs
     pairs = {k: v for k, v in pairs.items() if v}
     if not pairs:
         return 0
@@ -2740,6 +2749,9 @@ def _manages_connected_page(page_ids) -> bool:
 from urllib.parse import urlencode, parse_qs, urlparse
 
 FB_APP_ID = B.FB_APP_ID
+def _fb_app_id() -> str:
+    """The Facebook app ID now in .env (read each time, so saving it needs no restart)."""
+    return (os.environ.get("FB_APP_ID", "") or "").strip() or FB_APP_ID
 from html import escape as _html_escape
 PAGE_TITLE = _html_escape(("Abra — " + B.CREATOR_NAME) if B.CREATOR_NAME else "Abra")
 OAUTH_REDIRECT = f"http://localhost:{PORT}/oauth/callback"   # register this address in the Facebook app if ABRA_PORT changes
@@ -2889,6 +2901,10 @@ You can always come back and update a key later from Settings.</p>
 <div class='keyfield'><label>Muse — Meta Model API</label>
 <input class='keyin' type='password' name='muse' placeholder='your Meta Muse key' autocomplete='off' autocapitalize='off' spellcheck='false'>
 <div class='kh'>dev.meta.ai. Powers transcription, copy, comment screening &amp; Story overlays.</div></div>
+<div class='keyfield'><label>Facebook — your Meta app (to connect your Page)</label>
+<input class='keyin' type='text' name='fbappid' placeholder='Facebook App ID (digits)' autocomplete='off' autocapitalize='off' spellcheck='false'>
+<input class='keyin' type='password' name='fbsecret' placeholder='Facebook App Secret' autocomplete='off' autocapitalize='off' spellcheck='false'>
+<div class='kh'>developers.facebook.com → your app → Settings → Basic (App ID and App Secret). Under Facebook Login → Settings, add the Valid OAuth Redirect URI: http://localhost:8765/oauth/callback (use your ABRA_PORT if you changed it).</div></div>
 <button type='submit'>Save &amp; activate my crew</button>
 </form>
 <div class='note'>Keys are written to this machine's local config only , and each one is sent only to the provider it belongs to.
@@ -2929,7 +2945,7 @@ def oauth_start_url() -> str:
         _oauth_states.clear()
     _oauth_states.add(state)
     return "https://www.facebook.com/v23.0/dialog/oauth?" + urlencode({
-        "client_id": FB_APP_ID, "redirect_uri": OAUTH_REDIRECT,
+        "client_id": _fb_app_id(), "redirect_uri": OAUTH_REDIRECT,
         "scope": OAUTH_SCOPES, "state": state, "response_type": "code"})
 
 
@@ -3055,10 +3071,10 @@ def oauth_exchange(code: str):
     secret = os.environ.get("FB_APP_SECRET", "")
     base = f"https://graph.facebook.com/{B.API_VERSION}"
     tok = _rq.get(f"{base}/oauth/access_token", params={
-        "client_id": FB_APP_ID, "redirect_uri": OAUTH_REDIRECT,
+        "client_id": _fb_app_id(), "redirect_uri": OAUTH_REDIRECT,
         "client_secret": secret, "code": code}, timeout=30).json()["access_token"]
     ll = _rq.get(f"{base}/oauth/access_token", params={
-        "grant_type": "fb_exchange_token", "client_id": FB_APP_ID,
+        "grant_type": "fb_exchange_token", "client_id": _fb_app_id(),
         "client_secret": secret, "fb_exchange_token": tok}, timeout=30).json()["access_token"]
     me = _rq.get(f"{base}/me",
                  params={"fields": "name,picture.width(256).height(256)",
@@ -12416,6 +12432,9 @@ class Handler(BaseHTTPRequestHandler):
             if not FB_APP_ID:
                 self._send(b"<!doctype html><meta charset=utf-8><title>Abra</title><p>Facebook connect is not set up yet. Set FB_APP_ID in your .env file to your Facebook app's ID, then restart Abra.</p>", "text/html; charset=utf-8")
                 return
+            if not _fb_app_id():
+                self._send(b"<p>Add your Facebook App ID and App Secret first: open <a href='/connect/ai'>Connect your AI keys</a>, fill in the Facebook fields, then come back here.</p>", "text/html; charset=utf-8")
+                return
             self._send(CONNECT_PAGE.format(oauth_url=oauth_start_url()).encode(),
                        "text/html; charset=utf-8")
             return
@@ -13152,7 +13171,7 @@ class Handler(BaseHTTPRequestHandler):
                             "description": card.get("description", ""), "hashtags": card.get("hashtags", []),
                             "slot": card.get("proposed_slot"), "thumbnail": card.get("thumbnail"),
                             "captions": bool(card.get("transcript")), "transcript": card.get("transcript") or "",
-                            "video_file": vname}, dry_run=False)
+                            "video_file": vname}, dry_run=DEMO_DRY_RUN)
                     except Exception as e:
                         card["auto_result"] = "auto error: " + str(e)[:120]
                 self._send(json.dumps(card).encode(), "application/json")
@@ -13164,7 +13183,7 @@ class Handler(BaseHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(length) or b"{}")
             try:
-                msg = confirm_and_schedule(body, dry_run=bool(body.get("dry_run")))
+                msg = confirm_and_schedule(body, dry_run=bool(body.get("dry_run")) or DEMO_DRY_RUN)
             except Exception as e:
                 msg = "error: " + str(e)[:150]
             self._send(json.dumps({"msg": msg}).encode(), "application/json")
