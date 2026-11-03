@@ -35,7 +35,7 @@ The hackathon project is Abra's **AI creator studio**, built on the Meta Model A
 - **Reel captions:** the Muse Voice transcript is burned onto the Reel (portrait 9:16) as well as the Stories, for Load, auto-publish and batch posts.
 - **Reply approval:** a page can hold each drafted comment reply until the creator approves it. It is off by default.
 
-*Honest scope: the comment-reply loop and the first dashboard snapshot (Oct 21, 2026) predate the event. The list above is what was added or substantially reworked during it. For this submission the live camera recorder, hands-free gestures, Greenscreen, the Create templates and the Create teleprompter, and voice commands and spoken replies are switched off in the app. Their code stays in the repository, behind switches in `liveview.py`, and they are not part of the demo.*
+*Honest scope: the comment-reply loop and the first dashboard snapshot (Oct 21, 2026) predate the event. The list above is what was added or substantially reworked during it. For this submission the live camera recorder, hands-free gestures, Greenscreen, the Create templates and the Create teleprompter, and voice commands and spoken replies are switched off in the app. Their code stays in the repository. The camera, Greenscreen and voice have one switch each in `liveview.py`; the Create templates are off because `film_genres.json` is empty; and they are not part of the demo.*
 
 ---
 
@@ -141,7 +141,7 @@ Add them with the **Connect your AI keys** banner, or in `.env`. Facebook is not
 ### Set up and run
 
 ```
-python3 -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
@@ -149,7 +149,7 @@ cp persona.example.md persona.md
 python3 liveview.py
 ```
 
-Open http://localhost:8765 in Chrome. The dashboard runs in that window; stop it with Ctrl+C. The first start creates `state.db` with every table the app reads.
+Open http://localhost:8765 in Chrome. The dashboard runs in that window; stop it with Ctrl+C. The first start creates `state.db` with every table the app reads, plus `bot.log`, `.mon_cache.json` and `certs/` (a self-signed certificate for the phone link). All of them are git-ignored.
 
 To use another port, set `ABRA_PORT` on the command line or in `.env`. `ABRA_HTTPS_PORT` sets the HTTPS port for the phone link (default 8766). A blank value means the default:
 

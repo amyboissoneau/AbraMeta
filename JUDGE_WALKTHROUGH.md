@@ -16,7 +16,7 @@ Follow these steps in order. Each step says what you should see, and what needs 
 From the repository folder, in Terminal:
 
 ```
-python3 -m venv venv
+python3.12 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env

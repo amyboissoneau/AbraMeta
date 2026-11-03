@@ -13311,6 +13311,7 @@ if __name__ == "__main__":
             https_srv.socket = ctx.wrap_socket(https_srv.socket, server_side=True)
             threading.Thread(target=https_srv.serve_forever, daemon=True).start()
             B.log.info("Abra HTTPS listening on %d (self-signed)", HTTPS_PORT)
+            B.log.info("Abra dashboard: open http://localhost:%d in Chrome", PORT)
         except Exception as e:
             B.log.warning("HTTPS listener disabled: %s", str(e)[:160])
     http_srv.serve_forever()
