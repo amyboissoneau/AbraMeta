@@ -1253,7 +1253,7 @@ def assistant_reply(message: str, history=None, persona=None) -> str:
                 "money or comment replies, give a quick take and hand off to Koa or Nico.",
         "koa": "You are Koa. Speak in the FIRST PERSON as Koa \u2014 steady, protective and "
                "numbers-first. Your job is earnings, the AI-cost ledger, monetization eligibility, "
-               "contracts and page standing. For posting or comments, give a quick take and hand "
+               "page standing. For posting or comments, give a quick take and hand "
                "off to Sage or Nico.",
     }
     if persona == "abra":
@@ -1267,7 +1267,7 @@ def assistant_reply(message: str, history=None, persona=None) -> str:
         "- Nico: replies to comments in the creator's own voice, likes good ones, skips spam and hate.\n"
         "- Sage: watches a dropped video, writes the post + picks the hook it expects to do best, "
         "schedules the Reel (with captions when they are on), and cuts captioned Stories.\n"
-        "- Koa: earnings, AI-cost ledger, contract review, page standing.\n"
+        "- Koa: earnings, AI-cost ledger, page standing.\n"
         "HOW ABRA WORKS (use this to welcome or explain things, in plain language): Abra runs the "
         "creator's Facebook page with the three-member crew above, built on Meta's Muse models and Claude. "
         "AI usage is tracked as an estimate in Money & Legal. Getting started takes two steps: connect a "
@@ -1303,7 +1303,7 @@ def assistant_reply(message: str, history=None, persona=None) -> str:
         "changes anything — only open a tab or run a read. "
         "Then add one more final line 'CREW: <who>' naming the ONE crew member whose job this "
         "request is about — nico (comments & DMs), sage (writing/scheduling posts, video, "
-        "analytics reads), koa (money, earnings, contracts, page standing) "
+        "analytics reads), koa (money, earnings, page standing) "
         "— or none for general chit-chat. Neither the ACTION nor the CREW line is shown to them."
     )
     if not B.muse_key():   # no Muse key: the canned reply says what to add (no model call)
@@ -3549,6 +3549,8 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
   .thumbopt img { width:72px; height:112px; object-fit:cover; border-radius:10px; box-shadow:var(--rim), var(--e1); border:2px solid transparent; }
   .thumbopt input:checked + img { border-color:var(--accent); }
   .adsnote { font-size:12px; color:var(--ink3); margin:0 0 12px; line-height:1.55; }
+  #adsWrap, .adpill, .adbtn { display:none !important; }
+  .acct-hide { display:none !important; }
   .adrow { display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--card2); border-radius:14px; padding:12px 14px; box-shadow:var(--rim), var(--e1); margin-bottom:10px; }
   .adrow-main { flex:1 1 220px; min-width:0; }
   .adrow-t { font-weight:700; font-size:13px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -5841,7 +5843,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
       <div class="tile"><div class="lab">Pace</div><div class="val" id="tPace">–</div>
         <div class="cap" id="paceCap">per 15 min</div><div class="meter"><i id="paceBar" style="width:0%"></i></div></div>
       <div class="tile"><div class="lab">Muse checks</div><div class="val" id="tReview">–</div>
-        <div class="cap" id="tReviewCap">drafts checked by Muse before posting (simple praise skips it)</div></div>
+        <div class="cap" id="tReviewCap">drafts checked by Muse Spark before posting (simple praise skips it)</div></div>
       <div class="tile"><div class="lab">FB Health</div><div class="val" id="tHealth">–</div>
         <div class="cap" id="tHealthCap">flags &amp; throttles</div></div>
     </div>
@@ -6092,7 +6094,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
     <section>
       <h2> Your custom stickers <span class="hint">photos of you, cut out to use as stickers on your Stories</span></h2>
       <p class="help-p" style="margin:2px 0 12px">Add photos of yourself — surprised, laughing, pointing.
-      Abra cuts you out of the background (Meta SAM) and saves you as a reaction you can drop onto any Story.
+      Abra cuts you out of the background (Meta SAM 3.1) and saves you as a reaction you can drop onto any Story.
       Clear, well-lit photos of just you work best.</p>
       <input type="file" id="rxFile" accept="image/*" hidden onchange="rxPicked(this)">
       <div class="rxrow">
@@ -6106,7 +6108,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
       <span class="hint" id="rxMsg" style="display:block; margin-top:9px"></span>
       <div id="rxGrid" class="rxgrid" style="margin-top:14px"><div class="empty">no custom stickers yet</div></div>
     </section>
-    <section>
+    <section class="acct-hide">
       <h2> Plugins &amp; connections <span class="hint">the tools your crew works with</span></h2>
       <div class="conns">
         <div class="conn">
@@ -6123,7 +6125,7 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8"><link rel="icon" href
         </div>
       </div>
     </section>
-    <section>
+    <section class="acct-hide">
       <h2> Plan &amp; billing <span class="hint">billing isn't set up yet</span></h2>
       <div class="billcards">
         <div class="billcard"><div class="blabel">Plan</div>
@@ -6654,7 +6656,7 @@ function renderSchedCard(d){
   const thumbOpts = (d.thumbnail_options && d.thumbnail_options.length)
     ? '<div class="thumbopts"><span class="hint">Cover (pick one)</span>' + d.thumbnail_options.map(function(f,i){ return '<label class="thumbopt"><input type="radio" name="thumbpick" value="'+f+'"'+(i===0?' checked':'')+'><img src="/draft/'+f+'" alt="cover option '+(i+1)+'"></label>'; }).join('') + '</div>'
     : (thumb ? '<img class="sc-thumb" src="'+thumb+'" alt="thumbnail"><div class="hint" style="align-self:center">Sage cover</div>' : '');
-  const heard = d.transcript ? ' Heard: &ldquo;'+esc(d.transcript.slice(0,160))+(d.transcript.length>160?'…':'')+'&rdquo;'
+  const heard = d.transcript ? ' Heard (Muse Voice): &ldquo;'+esc(d.transcript.slice(0,160))+(d.transcript.length>160?'…':'')+'&rdquo;'
                              : ' No speech detected — titles written from what Sage sees.';
   document.getElementById('schedCard').innerHTML = `
     <div class="sstep done"><div class="snum">2</div><div class="sbody">
@@ -6785,10 +6787,10 @@ async function museRankHooks(d){
     titles.forEach((t,i)=>{
       const opt=document.getElementById('titleopt-'+i), b=document.getElementById('hookbadge-'+i);
       if(opt) opt.classList.toggle('winner', i===w);
-      if(b) b.textContent = (i===w) ? 'Sage’s pick' : '';
+      if(b) b.textContent = (i===w) ? 'Muse Wonder’s pick' : '';
     });
     pick.classList.add('ready');
-    pick.innerHTML = '<b>Sage’s pick:</b> &ldquo;'+esc(titles[w])+'&rdquo; <span class="hookwhy" id="hookWhy"></span>';
+    pick.innerHTML = '<b>Muse Wonder’s pick:</b> &ldquo;'+esc(titles[w])+'&rdquo; <span class="hookwhy" id="hookWhy"></span>';
     const why=document.getElementById('hookWhy');
     if(j.reason && why){ const txt=j.reason; let i=0; (function type(){ if(i<=txt.length){ why.textContent=txt.slice(0,i++); setTimeout(type,14); } })(); }
   }catch(e){ stopScan(); pick.style.display='none'; }
@@ -6971,7 +6973,7 @@ function renderBatchPanel(){
         <button type="button" class="bmore" id="bMore-${i}" onclick="toggleBcard(${i})">More options ▾</button></div>
       <div class="bextra" id="bExtra-${i}" style="display:none">
         ${titles.length>1?`<label class="fl">Title <span class="hint">— Sage ranked ${titles.length} hooks</span></label>
-        <select class="bsel" id="bTitleSel-${i}" onchange="bApplyTitle(${i})">${titles.map((t,ti)=>`<option value="${ti}" ${ti===w?'selected':''}>${esc(t)}${ti===w?" — Sage's pick":''}</option>`).join('')}</select>`:''}
+        <select class="bsel" id="bTitleSel-${i}" onchange="bApplyTitle(${i})">${titles.map((t,ti)=>`<option value="${ti}" ${ti===w?'selected':''}>${esc(t)}${ti===w?" — Muse Wonder's pick":''}</option>`).join('')}</select>`:''}
         <label class="fl">Hashtags</label>
         <input class="bsel" id="bTags-${i}" value="${esc((d.hashtags||[]).join(' '))}" placeholder="#your #tags">
         <label class="fl">Stories <span class="hint">— auto-made from this video</span></label>
@@ -7718,7 +7720,7 @@ async function runSpotlight(){
   if(!d || (!d.pulse && !(d.ideas&&d.ideas.length))){ out.innerHTML='<div class="empty">Could not load that one — try another genre.</div>'+spotPresetsHtml(); return; }
   window._spotIdeas=d.ideas||[];
   var fb='https://www.facebook.com/search/videos/?q='+encodeURIComponent(q);
-  var h='<div class="spotcard"><div class="spothead">Spotlight · '+esc(d.query||q)+'</div>';
+  var h='<div class="spotcard"><div class="spothead">Spotlight · '+esc(d.query||q)+' <span class="si-plat">Muse Wonder</span></div>';
   if(d.pulse){ h+='<div class="spotpulse">'+esc(d.pulse)+'</div>'; }
   if(d.trends && d.trends.length){ h+='<div class="spottrends"><span class="spottl">Short-form patterns (AI read, general knowledge)</span>'+d.trends.map(function(t){ return '<button class="spottrend" onclick="spotPreset(this.textContent)">'+esc(t)+'</button>'; }).join('')+'</div>'; }
   if(window._spotIdeas.length){ h+='<div class="spotideas">'+window._spotIdeas.map(function(it,i){ return '<div class="spotidea">'+(it.platform?'<span class="si-plat">Suggested for '+esc(it.platform)+'</span>':'')+'<div class="si-hook">'+esc(it.hook)+'</div><div class="si-why">'+esc(it.why||'')+'</div><button class="btn ghost si-make" onclick="makeSpotIdea('+i+')">Make this →</button></div>'; }).join('')+'</div>'; }
@@ -12429,9 +12431,6 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(b'{"deals":[]}', "application/json")
             return
         if self.path == "/connect" or self.path.startswith("/connect?"):
-            if not FB_APP_ID:
-                self._send(b"<!doctype html><meta charset=utf-8><title>Abra</title><p>Facebook connect is not set up yet. Set FB_APP_ID in your .env file to your Facebook app's ID, then restart Abra.</p>", "text/html; charset=utf-8")
-                return
             if not _fb_app_id():
                 self._send(b"<p>Add your Facebook App ID and App Secret first: open <a href='/connect/ai'>Connect your AI keys</a>, fill in the Facebook fields, then come back here.</p>", "text/html; charset=utf-8")
                 return

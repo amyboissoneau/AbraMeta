@@ -1,4 +1,4 @@
-# Hosted sample build for the hackathon judges.
+# Optional sample build with invented data. Not tested yet; see judge/DEPLOY.md.
 # The image holds only the files allowed by .dockerignore. It never runs the bot,
 # never reads your keys, and serves invented sample data (see judge/seed.py).
 FROM python:3.12-slim

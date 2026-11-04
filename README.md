@@ -10,7 +10,7 @@ The name is the old word everyone knows for magic — *abracadabra* — long rea
 
 - Drop in a raw video and **Sage** opens the story inside it — the hook, the post, the Reel, the Stories (staged for your approval).
 - Open your comments and **Nico** opens the conversation again — replying in your own voice, lifting the people who showed up with heart, and skipping spam and hate.
-- Open your money and **Koa** opens clarity — earnings, AI costs, contracts, page standing — so you can create without fear underneath it.
+- Open your money and **Koa** opens clarity — earnings, AI costs, page standing — so you can create without fear underneath it.
 
 Three openings. One crew. All in service of one thing: *you, creating.*
 
@@ -51,7 +51,7 @@ Abra calls **five** hosted Meta Model API models, each tied to a feature in the 
 | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Launchpad + reply grounding | *Hears* each video you drop in — transcribes the audio so copy and replies are about what you actually said |
 | **SAM 3.1** (`sam-3.1`) | Reaction stickers + auto-reframe | Segments the creator out of a photo for Story reaction stickers, and tracks the subject to keep them centered in vertical crops |
 
-**Claude Opus** handles the substantive, in-voice comment replies, and the frame vision that grounds copy. One product: **five Meta models plus Claude**, with Muse Image's overlay path not yet tested end to end. The crew's spoken voices are free neural TTS (edge-tts). Honest about what powers what.
+**Claude Opus** handles the substantive, in-voice comment replies, and the frame vision that grounds copy. One product: **five Meta models plus Claude**, with Muse Image's overlay path not yet tested end to end. The crew's voices are switched off in this version. When on, they use ElevenLabs if a key is set, otherwise Microsoft edge-tts. Honest about what powers what.
 
 ---
 
@@ -131,7 +131,7 @@ These steps run the full app on your own computer. You don't need a hosted copy,
 
 ### Keys for the AI features
 
-The AI features use two keys. You can look around without them; add them to try the AI.
+The AI features need two keys: the Meta Muse key and the Anthropic key. You can look around without them. Optional extras, such as ElevenLabs voices and open-weight providers, are listed in `.env.example`.
 
 - **Meta Model API key** (`META_MUSE_API_KEY`): the Muse models (Muse Voice, Muse Spark, Muse Wonder and Muse Image). Hackathon participants can claim Meta API credits through the credits form linked from the hackathon's announcements. Claiming needs a payment method on the account, so set a spend limit.
 - **Anthropic API key** (`ANTHROPIC_API_KEY`): Claude, which reads video frames and drafts some replies. Get one at https://platform.claude.com.

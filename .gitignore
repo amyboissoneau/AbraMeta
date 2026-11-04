@@ -49,3 +49,8 @@ watchdog.log
 watchdog.out
 .bot_heartbeat
 DEMO_CHECKLIST.md
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
