@@ -2,6 +2,8 @@
 
 ### Abra is a verb. To *abra* is to **open**.
 
+**Demo video (3 minutes):** https://youtu.be/KROD3jJd2P8
+
 Every creator knows the closed-door feeling: a video sitting unposted because you don't know how to frame it, an inbox too full to face, earnings and contracts you'd rather not look at, a brand door you don't know how to knock on. The block was never a *scheduling* problem — it's a *closed* one.
 
 The name is the old word everyone knows for magic — *abracadabra* — long read as **"I create as I speak."** Creation that doesn't begin with having it all figured out, but with *speaking*: *let there be*, and then an opening. It's the oldest instruction ever given to a creator, and still the only one that matters — you take nothing, a thought or a shaky clip, and speak something into being that wasn't there before. That's quietly sacred, even on a Tuesday.
